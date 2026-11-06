@@ -1,0 +1,21 @@
+{
+  "name": "authenticate-fork-prs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GitHub Action: lets test reporters upload to flakiness.io from pull requests from forks.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.ts",
+    "typecheck": "tsc"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@actions/artifact": "^6.3.1",
+    "@actions/core": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

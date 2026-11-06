@@ -1,0 +1,28 @@
+name: Authenticate fork PRs with flakiness.io
+description: >
+  Lets test reporters upload to flakiness.io from pull requests from forks, where secrets
+  and OIDC are unavailable, by setting FLAKINESS_ACCESS_TOKEN for the following steps.
+  Does nothing in other runs.
+author: flakiness.io
+
+inputs:
+  flakiness-project:
+    description: >
+      The flakiness.io project to upload to, as "org/project". It must be linked to this
+      repository and accept uploads from pull requests from forks. Defaults to the
+      FLAKINESS_PROJECT environment variable.
+    required: false
+  github-token:
+    description: >
+      Sent to flakiness.io to look up this run's artifacts. It is never stored.
+      In private repositories, it needs the `actions: read` permission.
+    required: false
+    default: ${{ github.token }}
+  endpoint:
+    description: flakiness.io base URL.
+    required: false
+    default: https://flakiness.io
+
+runs:
+  using: node24
+  main: dist/index.js
