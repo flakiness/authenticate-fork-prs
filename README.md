@@ -41,8 +41,8 @@ then:
 >   actions: read
 > ```
 
-If flakiness.io can't issue a token, the step fails. Add `continue-on-error: true` to the
-step to run the tests anyway.
+If the action can't get a token, it logs a warning instead of failing the step, so the
+tests still run.
 
 ## How it works
 

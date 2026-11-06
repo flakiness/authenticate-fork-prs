@@ -29,28 +29,30 @@ const secret = randomBytes(32).toString('hex');
 core.setSecret(secret);
 const artifactName = `flakiness-auth-${createHash('sha256').update(secret).digest('hex')}`;
 
-const dir = await mkdtemp(path.join(process.env.RUNNER_TEMP!, 'flakiness-'));
-const file = path.join(dir, 'proof.txt');
-await writeFile(file, 'flakiness.io authorization. Safe to delete.\n');
-const artifacts = new DefaultArtifactClient();
-await artifacts.uploadArtifact(artifactName, [file], dir, { retentionDays: 1 });
+// Warn instead of failing: a failed step would skip the tests, and only maintainers can fix
+// the cause, not the author of the pull request.
+try {
+  const dir = await mkdtemp(path.join(process.env.RUNNER_TEMP!, 'flakiness-'));
+  const file = path.join(dir, 'proof.txt');
+  await writeFile(file, 'flakiness.io authorization. Safe to delete.\n');
+  const artifacts = new DefaultArtifactClient();
+  await artifacts.uploadArtifact(artifactName, [file], dir, { retentionDays: 1 });
 
-const response = await fetch(`${endpoint}/api/githubForkPR/authenticate`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    orgSlug,
-    projectSlug,
-    runId: Number(process.env.GITHUB_RUN_ID), secret, githubToken,
-  }),
-});
-await artifacts.deleteArtifact(artifactName).catch(e => core.warning(`Failed to delete artifact ${artifactName}: ${e}`));
-
-if (response.ok) {
+  const response = await fetch(`${endpoint}/api/githubForkPR/authenticate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      orgSlug,
+      projectSlug,
+      runId: Number(process.env.GITHUB_RUN_ID), secret, githubToken,
+    }),
+  }).finally(() => artifacts.deleteArtifact(artifactName).catch(e => core.warning(`Failed to delete artifact ${artifactName}: ${e}`)));
+  if (!response.ok)
+    throw new Error(`HTTP ${response.status} ${await response.text()}`);
   const { accessToken } = await response.json();
   core.setSecret(accessToken);
   core.exportVariable('FLAKINESS_ACCESS_TOKEN', accessToken);
   core.info('FLAKINESS_ACCESS_TOKEN is set for subsequent steps.');
-} else {
-  core.setFailed(`flakiness.io did not issue an access token: HTTP ${response.status} ${await response.text()}`);
+} catch (e) {
+  core.warning(`Failed to get a flakiness.io access token: ${e instanceof Error ? e.message : e}`);
 }
