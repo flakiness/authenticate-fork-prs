@@ -105056,7 +105056,7 @@ if (response.ok) {
   const { accessToken } = await response.json();
   setSecret(accessToken);
   exportVariable("FLAKINESS_ACCESS_TOKEN", accessToken);
-  info("Set FLAKINESS_ACCESS_TOKEN for the following steps.");
+  info("FLAKINESS_ACCESS_TOKEN is set for subsequent steps.");
 } else {
   setFailed(`flakiness.io did not issue an access token: HTTP ${response.status} ${await response.text()}`);
 }

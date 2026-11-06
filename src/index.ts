@@ -50,7 +50,7 @@ if (response.ok) {
   const { accessToken } = await response.json();
   core.setSecret(accessToken);
   core.exportVariable('FLAKINESS_ACCESS_TOKEN', accessToken);
-  core.info('Set FLAKINESS_ACCESS_TOKEN for the following steps.');
+  core.info('FLAKINESS_ACCESS_TOKEN is set for subsequent steps.');
 } else {
   core.setFailed(`flakiness.io did not issue an access token: HTTP ${response.status} ${await response.text()}`);
 }
