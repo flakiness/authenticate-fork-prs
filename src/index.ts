@@ -20,7 +20,7 @@ const githubToken = core.getInput('github-token');
 
 const event = JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH!, 'utf8'));
 if (process.env.GITHUB_EVENT_NAME !== 'pull_request' || event.pull_request.head.repo?.id === event.pull_request.base.repo.id) {
-  core.notice('Skipping: not a pull request from a fork.');
+  core.info('Skipping: not a pull request from a fork.');
   process.exit(0);
 }
 

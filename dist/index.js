@@ -61711,9 +61711,6 @@ function error(message, properties = {}) {
 function warning(message, properties = {}) {
   issueCommand("warning", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
-function notice(message, properties = {}) {
-  issueCommand("notice", toCommandProperties(properties), message instanceof Error ? message.toString() : message);
-}
 function info(message) {
   process.stdout.write(message + os4.EOL);
 }
@@ -105029,7 +105026,7 @@ var endpoint2 = getInput("endpoint");
 var githubToken = getInput("github-token");
 var event = JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, "utf8"));
 if (process.env.GITHUB_EVENT_NAME !== "pull_request" || event.pull_request.head.repo?.id === event.pull_request.base.repo.id) {
-  notice("Skipping: not a pull request from a fork.");
+  info("Skipping: not a pull request from a fork.");
   process.exit(0);
 }
 var secret = randomBytes(32).toString("hex");
