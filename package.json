@@ -1,6 +1,6 @@
 {
   "name": "authenticate-fork-prs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "GitHub Action: lets test reporters upload to flakiness.io from pull requests from forks.",
   "type": "module",
